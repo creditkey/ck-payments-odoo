@@ -1,0 +1,1 @@
+# ck-payments-odoo
