@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_order_form_inherit_credit_key" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit.credit.key</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/notebook" position="inside">
+                <page string="Credit Key">
+                    <group>
+                        <field name="credit_key_order_id" readonly="1"/>
+                        <field name="credit_key_status" readonly="1"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

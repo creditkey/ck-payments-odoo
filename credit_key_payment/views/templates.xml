@@ -1,0 +1,168 @@
+<?xml version="1.0"?>
+<odoo>
+    <template id="credit_key_javascript_sdk" inherit_id="website.layout" name="Credit Key SDK">
+        <xpath expr="//head/script" position="before">
+            <t>
+                <script
+                    type="text/javascript"
+                    src="https://unpkg.com/@credit-key/creditkey-js@latest/umd/creditkey-js.js"
+                    crossorigin="anonymous"/>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="credit_key_product_widget_script" inherit_id="website_sale.product" name="Credit Key PDP Script">
+        <xpath expr="//div[@id='product_detail_main']" position="inside">
+            <t
+                t-set="credit_key_provider"
+                t-value="request.env['payment.provider'].sudo().search([('code', '=', 'credit_key'), ('state', 'in', ['enabled', 'test'])], limit=1)"/>
+            <t t-if="credit_key_provider and credit_key_provider.show_promotional_message_product">
+                <div id="credit_key_product_wrapper" class="mt-4 text-center">
+                    <div id="credit_key_product"/>
+                </div>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        if (typeof ck === 'undefined') {
+                            console.warn("Credit Key SDK not loaded.");
+                            return;
+                        }
+
+                        const publicKey = "<t t-esc='credit_key_provider.credit_key_public_key'/>";
+                        if (!publicKey) {
+                            console.warn("Credit Key: missing public key.");
+                            return;
+                        }
+
+                        const state = "<t t-esc='credit_key_provider.state'/>";
+                        const env = (state === "enabled") ? "production" : "staging";
+
+                        // Custom selector from backend (may be empty)
+                        const rawAnchorSelector = "<t t-esc='credit_key_provider.custom_location_selector_product'/>";
+                        let anchorSelector = rawAnchorSelector.trim();
+
+                        // If they just typed a bare word (e.g. "myclass"), treat it as a class selector
+                        if (anchorSelector &amp;&amp; !anchorSelector.startsWith('.') &amp;&amp; !anchorSelector.startsWith('#') &amp;&amp; !anchorSelector.includes(' ')) {
+                            anchorSelector = '.' + anchorSelector;
+                        }
+
+                        // Default anchor: the price section wrapper
+                        if (!anchorSelector) {
+                            anchorSelector = "div.o_wsale_product_details_content_section_price";
+                        }
+
+                        const wrapper = document.getElementById('credit_key_product_wrapper');
+                        const anchorEl = document.querySelector(anchorSelector);
+
+                        if (anchorEl &amp;&amp; wrapper) {
+                            anchorEl.insertAdjacentElement('afterend', wrapper);
+                        } else if (!anchorEl) {
+                            console.warn("Credit Key: anchor selector not found:", anchorSelector);
+                        }
+
+                        // Price selector (static or could be made configurable if you want)
+                        const selector = "#product_details .oe_price";
+                        const priceEl = document.querySelector(selector);
+                        if (!priceEl) {
+                            console.warn("Credit Key: Price selector not found:", selector);
+                            return;
+                        }
+
+                        const priceText = priceEl.innerText.replace(/[^\d.]/g, '');
+                        const productPrice = parseFloat(priceText);
+                        if (!productPrice || productPrice &lt;= 0) {
+                            console.warn("Credit Key: No valid price detected");
+                            return;
+                        }
+
+                        const client = new ck.Client(publicKey, env);
+                        const charges = new ck.Charges(productPrice, 0, 0, 0, productPrice);
+
+                        const container = document.getElementById('credit_key_product');
+                        if (container) {
+                            container.innerHTML = client.get_pdp_display(charges);
+                        }
+                    });
+                </script>
+            </t>
+        </xpath>
+    </template>
+
+    <template
+        id="credit_key_cart_widget_inherit"
+        inherit_id="website_sale.navigation_buttons"
+        name="Credit Key Widget Main Button">
+        <xpath expr="//t[a[@name='website_sale_main_button']]" position="after">
+            <t
+                t-set="credit_key_provider"
+                t-value="request.env['payment.provider'].sudo().search([('code', '=', 'credit_key'), ('state', 'in', ['enabled', 'test'])], limit=1)"/>
+            <t t-if="credit_key_provider and credit_key_provider.show_promotional_message_cart">
+                <div id="credit_key_cart_wrapper" class="mt-4 text-center">
+                    <div id="credit_key_cart"/>
+                </div>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        if (typeof ck === 'undefined') {
+                            console.warn("Credit Key SDK not loaded.");
+                            return;
+                        }
+
+                        // --- Provider config from QWeb ---
+                        const publicKey = "<t t-esc='credit_key_provider.credit_key_public_key'/>";
+                        if (!publicKey) {
+                            console.warn("Credit Key: missing public key.");
+                            return;
+                        }
+
+                        const state = "<t t-esc='credit_key_provider.state'/>";
+                        const env = (state === "enabled") ? "production" : "staging";
+
+                        // Custom selector from backend (may be empty)
+                        const rawAnchorSelector = "<t t-esc='credit_key_provider.custom_location_selector_cart'/>";
+                        let anchorSelector = rawAnchorSelector.trim();
+
+                        if (rawAnchorSelector &amp;&amp; !rawAnchorSelector.startsWith('.') &amp;&amp; !rawAnchorSelector.startsWith('#') &amp;&amp; !rawAnchorSelector.includes(' ')) {
+                            anchorSelector = '.' + rawAnchorSelector;
+                        }
+
+                        if (!anchorSelector) {
+                            anchorSelector = "a[name='website_sale_main_button']";
+                        }
+
+                        const wrapper = document.getElementById('credit_key_cart_wrapper');
+                        const anchorEl = document.querySelector(anchorSelector);
+
+                        if (anchorEl &amp;&amp; wrapper) {
+                            // Move the whole wrapper AFTER the anchor element
+                            anchorEl.insertAdjacentElement('afterend', wrapper);
+                        } else if (!anchorEl) {
+                            console.warn("Credit Key: anchor selector not found:", anchorSelector);
+                        }
+
+                        const totalSelector = "tr[name='o_order_total'] .oe_currency_value, tr[name='o_order_total'] .monetary_field";
+                        const totalEl = document.querySelector(totalSelector);
+
+                        if (!totalEl) {
+                            console.warn("Cart total element not found using selector:", totalSelector);
+                            return;
+                        }
+
+                        const totalText = totalEl.innerText.replace(/[^\d.]/g, '');
+                        const total = parseFloat(totalText) || 0;
+                        if (total &lt;= 0) {
+                            console.warn("Credit Key: No valid total detected");
+                            return;
+                        }
+
+                        const client = new ck.Client(publicKey, env);
+                        const charges = new ck.Charges(total, 0, 0, 0, total);
+
+                        const container = document.getElementById('credit_key_cart');
+                        if (container) {
+                            container.innerHTML = client.get_cart_display(charges, 'center', 'center');
+                        }
+                    });
+                </script>
+            </t>
+        </xpath>
+    </template>
+</odoo>

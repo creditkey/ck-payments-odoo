@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="payment_provider_credit_key" model="payment.provider">
+        <field name="name">Credit Key</field>
+        <field name="code">credit_key</field>
+        <field name="image_128" type="base64" file="credit_key_payment/static/description/credit_key_logo.svg"/>
+        <field name="redirect_form_view_id" ref="redirect_form"/>
+        <field name="module_id" ref="base.module_credit_key_payment"/>
+        <field name="available_country_ids" eval="[Command.set([ref('base.us')])]"/>
+    </record>
+
+    <record id="payment_method_credit_key" model="payment.method">
+        <field name="name">Credit Key</field>
+        <field name="code">payment_credit_key</field>
+        <field name="sequence">1000</field>
+        <field name="active">False</field>
+        <field name="image" type="base64" file="credit_key_payment/static/description/credit_key_logo.svg"/>
+        <field name="support_tokenization">False</field>
+        <field name="support_express_checkout">False</field>
+        <field name="support_refund">partial</field>
+        <field
+            name="supported_currency_ids"
+            eval="[Command.set([
+                        ref('base.USD'),
+                    ])]"/>
+        <field
+            name="provider_ids"
+            eval="[Command.set([
+                        ref('payment_provider_credit_key'),
+                    ])]"/>
+    </record>
+</odoo>
