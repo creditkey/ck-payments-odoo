@@ -52,6 +52,7 @@ class SaleOrder(models.Model):
             if confirm_resp.get("success") is False:
                 error_text = confirm_resp.get("error")
                 so.message_post(body=_("Credit Key /confirm_order failed for %s: %s") % (ck_order_id, error_text))
+                raise UserError(_("Create Invoice failed %s:", error_text))
                 continue
             final_status = confirm_resp.get("status")
             so.credit_key_status = final_status

@@ -7,13 +7,23 @@
         <field name="inherit_id" ref="payment.payment_provider_form"/>
         <field name="arch" type="xml">
             <group name="provider_credentials" position="inside">
-                <group invisible="code != 'credit_key'">
+                <group name="v1_keys" string="V1 Keys" invisible="code != 'credit_key'">
                     <field
                         name="credit_key_public_key"
                         required="code == 'credit_key' and state != 'disabled'"
                         password="True"/>
                     <field
                         name="credit_key_shared_secret"
+                        required="code == 'credit_key' and state != 'disabled'"
+                        password="True"/>
+                </group>
+                <group name="v2_keys" string="V2 Keys" invisible="code != 'credit_key'">
+                    <field
+                        name="credit_key_client_key"
+                        required="code == 'credit_key' and state != 'disabled'"
+                        password="True"/>
+                    <field
+                        name="credit_key_client_secret"
                         required="code == 'credit_key' and state != 'disabled'"
                         password="True"/>
                 </group>

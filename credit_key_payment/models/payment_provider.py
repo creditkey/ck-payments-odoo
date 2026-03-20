@@ -1,7 +1,8 @@
 import requests
 
-from odoo import _, fields, models
+from odoo import _, api, fields, models
 from odoo.tools.urls import urljoin as url_join
+from odoo.exceptions import ValidationError
 
 
 _ERROR_MESSAGES = {
@@ -42,6 +43,16 @@ class PaymentProvider(models.Model):
 
     custom_location_selector_cart = fields.Char(
         string="Custom Selector (Checkout)", help="Enter the custom price tag selector."
+    )
+
+    credit_key_client_key = fields.Char(
+        string="Credit Key Client ID",
+        help="The Client ID provided to you by Credit Key.",
+        required_if_provider="credit_key",
+        groups="base.group_system",
+    )
+    credit_key_client_secret = fields.Char(
+        string="Credit Key Client Secret", required_if_provider="credit_key", groups="base.group_system"
     )
 
     def _compute_feature_support_fields(self):
