@@ -9,6 +9,8 @@
     "website": "https://www.creditkey.com",
     "depends": ["website_sale"],
     "data": [
+        "security/ir.model.access.csv",
+        "data/ir_cron.xml",
         "views/templates.xml",
         "data/account_payment_method_data.xml",
         "views/payment_credit_key_template.xml",
@@ -17,6 +19,7 @@
         "views/sale_order_views.xml",
         "views/account_move_views.xml",
         "views/payment_provider_views.xml",
+        "wizard/credit_key_checkout_wizard_views.xml",
     ],
     "post_init_hook": "post_init_hook",
     "uninstall_hook": "uninstall_hook",

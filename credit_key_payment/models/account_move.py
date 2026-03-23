@@ -48,7 +48,7 @@ class AccountMove(models.Model):
                         )
                         % (ck_order_id, order_status)
                     )
-                if order_status in ("cancelled", "refunded", "returned"):
+                if order_status in ("canceled", "refunded", "returned"):
                     raise UserError(
                         _("Credit Key order %s is already %s — no refund needed.") % (ck_order_id, order_status)
                     )
@@ -66,7 +66,7 @@ class AccountMove(models.Model):
             if refund_response.get("success") is False:
                 raise UserError(_("Credit Key refund request failed: %s") % refund_response.get("error"))
             refund_status = (refund_response.get("status") or "").lower()
-            if refund_status not in ("returned", "refunded", "cancelled"):
+            if refund_status not in ("returned", "refunded", "canceled"):
                 raise UserError(
                     _("Credit Key refund failed for invoice %s. Response status: %s") % (move.name, refund_status)
                 )

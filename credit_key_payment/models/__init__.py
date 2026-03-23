@@ -6,3 +6,4 @@ from . import account_payment_method
 from . import account_payment_register
 from . import account_move_reversal
 from . import account_payment
+from . import res_partner

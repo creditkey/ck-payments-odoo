@@ -6,6 +6,11 @@
         <field name="model">payment.provider</field>
         <field name="inherit_id" ref="payment.payment_provider_form"/>
         <field name="arch" type="xml">
+            <group name="payment_state" position="after">
+                <group>
+                    <field name="credit_key_api_version" invisible="code != 'credit_key'"/>
+                </group>
+            </group>
             <group name="provider_credentials" position="inside">
                 <group name="v1_keys" string="V1 Keys" invisible="code != 'credit_key'">
                     <field
@@ -20,11 +25,11 @@
                 <group name="v2_keys" string="V2 Keys" invisible="code != 'credit_key'">
                     <field
                         name="credit_key_client_key"
-                        required="code == 'credit_key' and state != 'disabled'"
+                        required="code == 'credit_key' and state != 'disabled' and credit_key_api_version == 'v2'"
                         password="True"/>
                     <field
                         name="credit_key_client_secret"
-                        required="code == 'credit_key' and state != 'disabled'"
+                        required="code == 'credit_key' and state != 'disabled' and credit_key_api_version == 'v2'"
                         password="True"/>
                 </group>
             </group>

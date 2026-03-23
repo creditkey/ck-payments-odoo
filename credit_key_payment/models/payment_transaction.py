@@ -52,7 +52,8 @@ class PaymentTransaction(models.Model):
 
         # Build Cart Items
         cart_items = []
-        for line in self.sale_order_ids.mapped("order_line"):
+        sale_orders = self.sale_order_ids
+        for line in sale_orders.mapped("order_line"):
             if line.product_id and line.price_total > 0:
                 cart_items.append({
                     "merchant_id": str(line.id),
@@ -82,16 +83,25 @@ class PaymentTransaction(models.Model):
             "phone_number": partner.phone or "",
             "company_name": partner.company_name or partner.commercial_company_name or "",
         }
-        shipping_partner = self.sale_order_ids.mapped("partner_shipping_id")[:1] or partner
+        shipping_partner = sale_orders[:1].partner_shipping_id or partner
         shipping_address = self._credit_key_format_address(shipping_partner)
 
         # Charges section
         total = sum(cart.get("price", 0) for cart in cart_items)
+        shipping = sum(
+            l.price_total
+            for l in sale_orders.mapped("order_line").filtered(lambda l: l.is_delivery)
+        )
         tax = sum(cart.get("tax", 0) for cart in cart_items)
         grand_total = total + tax
         charges = {
             "total": total,
+            "shipping": shipping,
             "tax": tax,
+            "discount": sum(
+                so.currency_id.round(so.amount_undiscounted - so.amount_untaxed)
+                for so in sale_orders
+            ),
             "grand_total": grand_total,
         }
         return {
@@ -192,11 +202,11 @@ class PaymentTransaction(models.Model):
         response = {}
         cart_items = []
         for line in sale_order.order_line.filtered(lambda l: not l.display_type):
-            tax_amount = sum(line.tax_ids.mapped("amount")) if line.tax_ids else 0.0
+            tax_amount = line.price_tax if line.tax_ids else 0.0
             cart_items.append({
                 "merchant_id": str(line.id),
                 "name": line.product_id.display_name or line.name,
-                "price": float(line.price_unit),
+                "price": float(line.price_subtotal),
                 "quantity": int(line.product_uom_qty),
                 "sku": line.product_id.default_code or "",
                 "tax": float(tax_amount),
@@ -206,15 +216,14 @@ class PaymentTransaction(models.Model):
         total = sale_order.amount_untaxed
         tax = sale_order.amount_tax
         shipping = sum(l.price_total for l in sale_order.order_line.filtered(lambda l: l.is_delivery))
-        discount = sum(abs(l.price_total) for l in sale_order.order_line.filtered(lambda l: l.price_total < 0))
-        grand_total = total + tax - discount
+        discount = sale_order.currency_id.round(sale_order.amount_undiscounted - sale_order.amount_untaxed) if sale_order.amount_undiscounted else 0.0
 
         charges = {
             "total": total,
             "shipping": shipping,
             "tax": tax,
             "discount_amount": discount,
-            "grand_total": grand_total,
+            "grand_total": sale_order.amount_total,
         }
 
         # Shipping address
