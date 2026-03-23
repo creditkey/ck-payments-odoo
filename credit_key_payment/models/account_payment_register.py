@@ -8,7 +8,6 @@ class AccountPaymentRegister(models.TransientModel):
     def _create_payment_vals_from_wizard(self, batch_result):
         """
         Override base Odoo payment register logic:
-        - For Credit Key inbound: call /begin_standalone_checkout
         - For Credit Key outbound (refund): call /refund
         Otherwise, fall back to normal behavior.
         """

@@ -39,7 +39,7 @@ class CreditKeyController(http.Controller):
 
     @http.route("/credit_key/cancel", type="http", auth="public", csrf=False)
     def creditkey_cancel(self, **kwargs):
-        """Handle cancelled checkout redirection from Credit Key."""
+        """Handle canceled checkout redirection from Credit Key."""
         ck_order_id = kwargs.get("ck_order")
         if ck_order_id:
             transaction = (
