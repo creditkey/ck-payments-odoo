@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<odoo>
+    <template id="credit_key_payment.method_form" inherit_id="payment.method_form">
+        <xpath expr="//div[@name='o_payment_inline_form']//t[@t-set='hide_secured_by']" position="attributes">
+            <attribute name="t-value">pm_sudo.code == 'payment_credit_key'</attribute>
+        </xpath>
+        <xpath expr="//label[hasclass('o_payment_option_label')]" position="attributes">
+            <attribute
+                name="t-att-class"
+                add="('d-none' if pm_sudo.code == 'payment_credit_key' else '')"
+                separator=" "/>
+        </xpath>
+        <xpath expr="//label[hasclass('o_payment_option_label')]" position="after">
+            <t t-if="pm_sudo.code == 'payment_credit_key'">
+                <img
+                    src="/credit_key_payment/static/description/ck_badge.svg"
+                    alt="Credit Key"
+                    style="height: 22px; margin-left: 4px;"/>
+            </t>
+        </xpath>
+    </template>
+</odoo>
