@@ -87,7 +87,7 @@ class SaleOrder(models.Model):
         if invoice:
             new_tx.invoice_ids = [(6, 0, invoice.ids)]
         new_tx._set_done()
-        new_tx._post_process()
+        new_tx._finalize_post_processing()
         return new_tx
 
     def write(self, vals):
@@ -129,7 +129,7 @@ class SaleOrder(models.Model):
         # --- Cart items ---
         cart_items = []
         for line in self.order_line.filtered(lambda l: not l.display_type and l.price_subtotal > 0):
-            tax_amount = line.price_tax if line.tax_ids else 0.0
+            tax_amount = line.price_tax if line.tax_id else 0.0
             cart_items.append({
                 "merchant_id": str(line.id),
                 "name": line.product_id.display_name or line.name or "Item",

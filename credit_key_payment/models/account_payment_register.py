@@ -21,7 +21,7 @@ class AccountPaymentRegister(models.TransientModel):
             "amount": self.amount,
             "payment_type": self.payment_type,
             "partner_type": self.partner_type,
-            "memo": self.communication,
+            "ref": self.communication,
             "journal_id": self.journal_id.id if self.journal_id else False,
             "company_id": self.company_id.id,
             "currency_id": self.currency_id.id,

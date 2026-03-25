@@ -202,7 +202,7 @@ class PaymentTransaction(models.Model):
         response = {}
         cart_items = []
         for line in sale_order.order_line.filtered(lambda l: not l.display_type):
-            tax_amount = line.price_tax if line.tax_ids else 0.0
+            tax_amount = line.price_tax if line.tax_id else 0.0
             cart_items.append({
                 "merchant_id": str(line.id),
                 "name": line.product_id.display_name or line.name,

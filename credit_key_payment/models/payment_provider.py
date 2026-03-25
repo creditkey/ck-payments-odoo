@@ -1,7 +1,7 @@
 import requests
 
 from odoo import _, fields, models
-from odoo.tools.urls import urljoin as url_join
+from werkzeug.urls import url_join
 
 
 _ERROR_MESSAGES = {

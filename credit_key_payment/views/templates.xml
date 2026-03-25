@@ -36,18 +36,16 @@
                         const state = "<t t-esc='credit_key_provider.state'/>";
                         const env = (state === "enabled") ? "production" : "staging";
 
-                        // Custom selector from backend (may be empty)
                         const rawAnchorSelector = "<t t-esc='credit_key_provider.custom_location_selector_product'/>";
                         let anchorSelector = rawAnchorSelector.trim();
 
-                        // If they just typed a bare word (e.g. "myclass"), treat it as a class selector
                         if (anchorSelector &amp;&amp; !anchorSelector.startsWith('.') &amp;&amp; !anchorSelector.startsWith('#') &amp;&amp; !anchorSelector.includes(' ')) {
                             anchorSelector = '.' + anchorSelector;
                         }
 
                         // Default anchor: the price section wrapper
                         if (!anchorSelector) {
-                            anchorSelector = "div.o_wsale_product_details_content_section_price";
+                            anchorSelector = "div.js_main_product &gt; div:first-child";
                         }
 
                         const wrapper = document.getElementById('credit_key_product_wrapper');
@@ -59,8 +57,7 @@
                             console.warn("Credit Key: anchor selector not found:", anchorSelector);
                         }
 
-                        // Price selector (static or could be made configurable if you want)
-                        const selector = "#product_details .oe_price";
+                        const selector = "#product_detail_main .oe_price";
                         const priceEl = document.querySelector(selector);
                         if (!priceEl) {
                             console.warn("Credit Key: Price selector not found:", selector);
@@ -106,7 +103,6 @@
                             return;
                         }
 
-                        // --- Provider config from QWeb ---
                         const publicKey = "<t t-esc='credit_key_provider.credit_key_public_key'/>";
                         if (!publicKey) {
                             console.warn("Credit Key: missing public key.");
@@ -116,7 +112,6 @@
                         const state = "<t t-esc='credit_key_provider.state'/>";
                         const env = (state === "enabled") ? "production" : "staging";
 
-                        // Custom selector from backend (may be empty)
                         const rawAnchorSelector = "<t t-esc='credit_key_provider.custom_location_selector_cart'/>";
                         let anchorSelector = rawAnchorSelector.trim();
 
@@ -132,13 +127,12 @@
                         const anchorEl = document.querySelector(anchorSelector);
 
                         if (anchorEl &amp;&amp; wrapper) {
-                            // Move the whole wrapper AFTER the anchor element
                             anchorEl.insertAdjacentElement('afterend', wrapper);
                         } else if (!anchorEl) {
                             console.warn("Credit Key: anchor selector not found:", anchorSelector);
                         }
 
-                        const totalSelector = "tr[name='o_order_total'] .oe_currency_value, tr[name='o_order_total'] .monetary_field";
+                        const totalSelector = "tr[id='order_total'] .oe_currency_value, tr[id='order_total'] .monetary_field";
                         const totalEl = document.querySelector(totalSelector);
 
                         if (!totalEl) {
