@@ -1,7 +1,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 {
-    "name": "Payment Provider: Credit Key",
+    "name": "Payment Provider: Credit Key - V17",
     "version": "17.0.1.0.0",
     "category": "Accounting/Payment Providers",
     "sequence": 350,

@@ -153,7 +153,9 @@ class SaleOrder(models.Model):
             "total": float(self.amount_untaxed),
             "shipping": shipping,
             "tax": float(self.amount_tax),
-            "discount_amount": self.currency_id.round(self.amount_undiscounted - self.amount_untaxed) if self.amount_undiscounted else 0.0,
+            "discount_amount": self.currency_id.round(self.amount_undiscounted - self.amount_untaxed)
+            if self.amount_undiscounted
+            else 0.0,
             "grand_total": float(self.amount_total),
         }
 
@@ -187,24 +189,29 @@ class SaleOrder(models.Model):
             provider = self.env["payment.provider"].sudo().search([("code", "=", "credit_key")], limit=1)
             if not provider:
                 raise UserError(_("No Credit Key payment provider found."))
-            ck_order_id = order.credit_key_order_id
-            result = provider._credit_key_make_request("find_order", {"id": ck_order_id})
-            if result.get("success") is False:
-                error_text = result.get("error")
-                raise UserError(_("Credit Key request failed: %s") % error_text)
-            status = (result.get("status") or "").lower()
-            if status == "shipped":
-                raise UserError(_("This Credit Key order is already '%s'. Try refunding the order instead.") % status)
-            elif status not in ("new", "placed"):
-                raise UserError(_("Cannot cancel this Credit Key order because its current status is '%s'.") % status)
-            payload = {"id": ck_order_id}
-            cancel_res = provider._credit_key_make_request("cancel_order", payload)
-            if cancel_res.get("success") is False:
-                error_text = cancel_res.get("error")
-                raise UserError(_("Credit Key request failed: %s") % error_text)
-            if (cancel_res.get("status") or "").lower() != "canceled":
-                raise UserError(
-                    _("Credit Key failed to cancel this order. Current status: %s") % cancel_res.get("status")
-                )
-            order.message_post(body=_("Credit Key order %s was successfully canceled.") % ck_order_id)
+            if not order._show_cancel_wizard():
+                ck_order_id = order.credit_key_order_id
+                result = provider._credit_key_make_request("find_order", {"id": ck_order_id})
+                if result.get("success") is False:
+                    error_text = result.get("error")
+                    raise UserError(_("Credit Key request failed: %s") % error_text)
+                status = (result.get("status") or "").lower()
+                if status == "shipped":
+                    raise UserError(
+                        _("This Credit Key order is already '%s'. Try refunding the order instead.") % status
+                    )
+                elif status not in ("new", "placed"):
+                    raise UserError(
+                        _("Cannot cancel this Credit Key order because its current status is '%s'.") % status
+                    )
+                payload = {"id": ck_order_id}
+                cancel_res = provider._credit_key_make_request("cancel_order", payload)
+                if cancel_res.get("success") is False:
+                    error_text = cancel_res.get("error")
+                    raise UserError(_("Credit Key request failed: %s") % error_text)
+                if (cancel_res.get("status") or "").lower() != "canceled":
+                    raise UserError(
+                        _("Credit Key failed to cancel this order. Current status: %s") % cancel_res.get("status")
+                    )
+                order.message_post(body=_("Credit Key order %s was successfully canceled.") % ck_order_id)
         return super().action_cancel()

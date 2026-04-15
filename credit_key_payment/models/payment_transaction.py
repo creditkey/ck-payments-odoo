@@ -17,7 +17,6 @@ class PaymentTransaction(models.Model):
     # ------------------------------------------------------------
     # Checkout: Rendering Values
     # ------------------------------------------------------------
-
     def _get_specific_rendering_values(self, processing_values):
         """Override of payment to return Credit Key-specific rendering values."""
         res = super()._get_specific_rendering_values(processing_values)
@@ -41,7 +40,6 @@ class PaymentTransaction(models.Model):
     # ------------------------------------------------------------
     # Payload Preparation
     # ------------------------------------------------------------
-
     def _credit_key_prepare_checkout_payload(self):
         """Prepare the checkout payload for Credit Key /begin_checkout endpoint."""
         self.ensure_one()
@@ -88,10 +86,7 @@ class PaymentTransaction(models.Model):
 
         # Charges section
         total = sum(cart.get("price", 0) for cart in cart_items)
-        shipping = sum(
-            l.price_total
-            for l in sale_orders.mapped("order_line").filtered(lambda l: l.is_delivery)
-        )
+        shipping = sum(l.price_total for l in sale_orders.mapped("order_line").filtered(lambda l: l.is_delivery))
         tax = sum(cart.get("tax", 0) for cart in cart_items)
         grand_total = total + tax
         charges = {
@@ -99,8 +94,7 @@ class PaymentTransaction(models.Model):
             "shipping": shipping,
             "tax": tax,
             "discount": sum(
-                max(0.0, so.currency_id.round(so.amount_undiscounted - so.amount_untaxed))
-                for so in sale_orders
+                max(0.0, so.currency_id.round(so.amount_undiscounted - so.amount_untaxed)) for so in sale_orders
             ),
             "grand_total": grand_total,
         }
@@ -119,7 +113,6 @@ class PaymentTransaction(models.Model):
     # ------------------------------------------------------------
     # Refund Logic
     # ------------------------------------------------------------
-
     def _create_child_transaction(self, amount, is_refund=False, **custom_create_values):
         """Override to send a refund request to Credit Key."""
         refund_tx = super()._create_child_transaction(amount or self.amount, is_refund=True)
@@ -152,7 +145,6 @@ class PaymentTransaction(models.Model):
     # -------------------------------------------------------------------------
     # Finalize flow after Credit Key checkout completes
     # -------------------------------------------------------------------------
-
     def _finalize_credit_key_payment(self, ck_order_id):
         """Mark payment, related invoices, and sale order(s) as approved."""
         self.ensure_one()
@@ -160,9 +152,7 @@ class PaymentTransaction(models.Model):
 
         if not provider:
             raise UserError(_("Missing provider for Credit Key transaction."))
-
         self._set_done()
-
         sale_orders = self.sale_order_ids
         if not sale_orders:
             return
@@ -193,12 +183,10 @@ class PaymentTransaction(models.Model):
     # -------------------------------------------------------------------------
     # Confirm Order
     # -------------------------------------------------------------------------
-
     def _call_credit_key_confirm_order(self, provider, sale_order, ck_order_id):
-        """Calls Credit Key /confirm_order endpoint for a completed order."""
+        """Calls Credit Key /confirm_order endpoint."""
         self.ensure_one()
 
-        # Build cart_items
         response = {}
         cart_items = []
         for line in sale_order.order_line.filtered(lambda l: not l.display_type):
@@ -212,11 +200,14 @@ class PaymentTransaction(models.Model):
                 "tax": float(tax_amount),
             })
 
-        # Compute charges
         total = sale_order.amount_untaxed
         tax = sale_order.amount_tax
         shipping = sum(l.price_total for l in sale_order.order_line.filtered(lambda l: l.is_delivery))
-        discount = sale_order.currency_id.round(sale_order.amount_undiscounted - sale_order.amount_untaxed) if sale_order.amount_undiscounted else 0.0
+        discount = (
+            sale_order.currency_id.round(sale_order.amount_undiscounted - sale_order.amount_untaxed)
+            if sale_order.amount_undiscounted
+            else 0.0
+        )
 
         charges = {
             "total": total,
@@ -226,7 +217,6 @@ class PaymentTransaction(models.Model):
             "grand_total": sale_order.amount_total,
         }
 
-        # Shipping address
         shipping_partner = sale_order.partner_shipping_id or sale_order.partner_id
         shipping_address = self._credit_key_format_address(shipping_partner)
 

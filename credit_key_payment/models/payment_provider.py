@@ -1,7 +1,7 @@
 import requests
+from werkzeug.urls import url_join
 
 from odoo import _, fields, models
-from werkzeug.urls import url_join
 
 
 _ERROR_MESSAGES = {
@@ -66,10 +66,7 @@ class PaymentProvider(models.Model):
             return "https://staging.creditkey.com/app/ecomm/"
 
     def _credit_key_make_request(self, endpoint, payload=None, headers=None):
-        """Make a request to Credit Key API at the specified endpoint.
-
-        Automatically uses GET for /find_order (with query parameters)
-        and POST for all other endpoints (with JSON payload).
+        """Make a request to Credit Key API.
 
         :param str endpoint: The endpoint path, e.g. 'refund', 'update_order', 'find_order'.
         :param dict payload: The payload or query parameters.
