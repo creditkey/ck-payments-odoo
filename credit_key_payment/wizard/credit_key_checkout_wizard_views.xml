@@ -49,8 +49,6 @@
                     <button name="action_confirm" string="Confirm" type="object" class="btn-primary" 
                     invisible="not credit_key_company_id"
                     />
-                    <button name="credit_key_check_company" string="Check Company" type="object" invisible="credit_key_company_id"/>
-                    <button name="credit_key_check_company_1" string="Check Company 1" type="object" invisible="credit_key_company_id"/>
                     <button string="Cancel" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>

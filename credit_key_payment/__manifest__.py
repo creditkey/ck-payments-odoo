@@ -7,7 +7,7 @@
     "sequence": 350,
     "author": "Credit Key",
     "website": "https://www.creditkey.com",
-    "depends": ["website_sale"],
+    "depends": ["sale_management", "website_sale"],
     "data": [
         "security/ir.model.access.csv",
         "data/ir_cron.xml",
