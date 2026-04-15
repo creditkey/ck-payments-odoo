@@ -1,29 +1,56 @@
 <?xml version="1.0"?>
 <odoo>
-    <record id="credit_key_checkout_wizard_view_form" model="ir.ui.view">
-        <field name="name">credit.key.checkout.wizard.view.form</field>
+    <record id="view_credit_key_checkout_wizard_form" model="ir.ui.view">
+        <field name="name">credit.key.checkout.wizard.form</field>
         <field name="model">credit.key.checkout.wizard</field>
         <field name="arch" type="xml">
-            <form string="Pay with Credit Key">
-                <group>
+            <form string="Credit Key Checkout">
+                <sheet>
                     <group>
-                        <field name="sale_order_id" invisible="1"/>
-                        <field name="partner_name"/>
-                        <field name="email"/>
-                        <field name="phone"/>
-                        <field name="credit_key_company_id" invisible="1"/>
+                        <group>
+                            <field name="ck_borrower_name" readonly="1"/>
+                            <field name="ck_borrower_email" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="ck_company_name" readonly="1"/>
+                            <field name="ck_status" readonly="1"/>
+                        </group>
                     </group>
-                    <group>
-                        <field name="street"/>
-                        <field name="street2"/>
-                        <field name="city"/>
-                        <field name="state_id"/>
-                        <field name="zip"/>
-                    </group>
-                </group>
+                    <notebook>
+                        <page string="Company Details">
+                            <group>
+                                <field name="ck_company_name" readonly="1"/>
+                                <field name="ck_status" readonly="1"/>
+                                <field name="ck_decision_date" readonly="1"/>
+                                <field name="ck_ordering_available" readonly="1"/>
+                            </group>
+                        </page>
+                        <page string="Credit Info">
+                            <group>
+                                <field name="ck_tcl_amount" readonly="1"/>
+                                <field name="ck_tcl_remaining" readonly="1"/>
+                                <field name="ck_vc_limit" readonly="1"/>
+                                <field name="ck_vc_remaining" readonly="1"/>
+                                <field name="ck_available_terms" readonly="1"/>
+                            </group>
+                        </page>
+                        <page string="Borrower">
+                            <group>
+                                <field name="ck_borrower_name" readonly="1"/>
+                                <field name="ck_borrower_email" readonly="1"/>
+                            </group>
+                        </page>
+                        <page string="Other Companies" invisible="not ck_other_companies">
+                            <field name="ck_other_companies" readonly="1" widget="text"/>
+                        </page>
+                    </notebook>
+                </sheet>
                 <footer>
-                    <button name="action_confirm" string="Confirm" type="object" class="btn-primary" invisible="not credit_key_company_id"/>
+                    <button name="action_confirm" string="Confirm" type="object" class="btn-primary" 
+                    invisible="not credit_key_company_id"
+                    />
                     <button name="credit_key_check_company" string="Check Company" type="object" invisible="credit_key_company_id"/>
+                    <button name="credit_key_check_company_1" string="Check Company 1" type="object" invisible="credit_key_company_id"/>
                     <button string="Cancel" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>

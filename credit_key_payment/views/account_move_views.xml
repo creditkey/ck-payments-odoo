@@ -5,6 +5,9 @@
         <field name="model">account.move</field>
         <field name="inherit_id" ref="account.view_move_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//field[@name='state']" position="before">
+                <button name="credit_key_checkout" string="Credit Key" type="object" invisible="state != 'posted'"/>
+            </xpath>
 
             <xpath expr="//sheet/notebook" position="inside">
                 <page string="Credit Key">

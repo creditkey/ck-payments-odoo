@@ -54,7 +54,7 @@ class PaymentTransaction(models.Model):
         cart_items = []
         sale_orders = self.sale_order_ids
         for line in sale_orders.mapped("order_line"):
-            if line.product_id and line.price_total > 0:
+            if line.product_id:
                 cart_items.append({
                     "merchant_id": str(line.id),
                     "name": line.product_id.name or "Item",

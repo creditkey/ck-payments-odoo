@@ -9,10 +9,6 @@
                 <field name="credit_key_company_id" invisible="1"/>
             </group>
 
-            <xpath expr="//field[@name='state']" position="before">
-                <button name="credit_key_checkout" string="Pay with Credit Key" type="object" invisible="state != 'sale'"/>
-            </xpath>
-
             <xpath expr="//sheet/notebook" position="inside">
                 <page string="Credit Key">
                     <group>

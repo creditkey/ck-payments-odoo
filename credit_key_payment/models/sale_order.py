@@ -210,29 +210,3 @@ class SaleOrder(models.Model):
             order.message_post(body=_("Credit Key order %s was successfully canceled.") % ck_order_id)
         return super().action_cancel()
 
-    def credit_key_check_company(self):
-        self.ensure_one()
-        # TODO: implement company check logic
-        pass
-
-    def credit_key_checkout(self):
-        self.ensure_one()
-        partner = self.partner_id
-        return {
-            "type": "ir.actions.act_window",
-            "name": "Pay with Credit Key",
-            "res_model": "credit.key.checkout.wizard",
-            "view_mode": "form",
-            "target": "new",
-            "context": {
-                "default_sale_order_id": self.id,
-                "default_partner_name": partner.name or "",
-                "default_email": partner.email or "",
-                "default_phone": partner.phone or "",
-                "default_street": partner.street or "",
-                "default_street2": partner.street2 or "",
-                "default_city": partner.city or "",
-                "default_state_id": partner.state_id.id or False,
-                "default_zip": partner.zip or "",
-            },
-        }
