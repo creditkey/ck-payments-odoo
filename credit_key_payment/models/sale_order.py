@@ -229,7 +229,10 @@ class SaleOrder(models.Model):
                 continue
             if not order.credit_key_order_id:
                 continue
-            provider = self.env["payment.provider"].sudo().search([("code", "=", "credit_key")], limit=1)
+            provider = self.env["payment.provider"].search(
+                [("code", "=", "credit_key"),
+                ("state", "in", ("test", "enabled"))], limit=1
+            )
             if not provider:
                 raise UserError(_("No Credit Key provider found."))
             ck_order_id = order.credit_key_order_id
@@ -313,7 +316,10 @@ class SaleOrder(models.Model):
         for order in self:
             if not order.credit_key_order_id:
                 continue
-            provider = self.env["payment.provider"].sudo().search([("code", "=", "credit_key")], limit=1)
+            provider = self.env["payment.provider"].search(
+                [("code", "=", "credit_key"),
+                ("state", "in", ("test", "enabled"))], limit=1
+            )
             if not provider:
                 raise UserError(_("No Credit Key payment provider found."))
             ck_order_id = order.credit_key_order_id

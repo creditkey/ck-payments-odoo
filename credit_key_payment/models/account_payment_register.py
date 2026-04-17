@@ -13,7 +13,10 @@ class AccountPaymentRegister(models.TransientModel):
         """
         self.ensure_one()
         payment_method = self.payment_method_line_id
-        provider = self.env["payment.provider"].search([("code", "=", payment_method.code)], limit=1)
+        provider = self.env["payment.provider"].search(
+            [("code", "=", "credit_key"),
+            ("state", "in", ("test", "enabled"))], limit=1
+        )
         if not provider or provider.code != "credit_key":
             return super()._create_payment_vals_from_wizard(batch_result)
         payment_vals = {
@@ -40,7 +43,10 @@ class AccountPaymentRegister(models.TransientModel):
                 raise UserError(_("No Credit Key Order ID found on the related invoice."))
             payload = {"id": ck_order_id, "amount": float(self.amount)}
             provider_code = self.payment_method_line_id.code
-            provider = self.env["payment.provider"].search([("code", "=", provider_code)], limit=1)
+            provider = self.env["payment.provider"].search(
+                [("code", "=", "credit_key"),
+                ("state", "in", ("test", "enabled"))], limit=1
+            )
             refund_failed = False
             error_message = False
             response = provider._credit_key_make_request("refund", payload)

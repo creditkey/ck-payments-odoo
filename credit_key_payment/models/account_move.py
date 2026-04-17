@@ -33,7 +33,7 @@ class AccountMove(models.Model):
             ck_order_id = move.credit_key_order_id
             if not ck_order_id:
                 continue
-            provider = move.env["payment.provider"].sudo().search([("code", "=", "credit_key")], limit=1)
+            provider = move.env["payment.provider"].sudo().search([("code", "=", "credit_key"), ("state", "in", ("test", "enabled"))], limit=1)
             if not provider:
                 raise UserError(_("No Credit Key provider configured."))
             response = provider._credit_key_make_request(

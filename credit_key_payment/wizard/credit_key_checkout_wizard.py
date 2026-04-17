@@ -38,7 +38,8 @@ class CreditKeyCheckoutWizard(models.TransientModel):
         """Make the Credit Key v2 backend checkout request."""
         self.ensure_one()
         provider = self.env["payment.provider"].search(
-            [("code", "=", "credit_key")], limit=1
+            [("code", "=", "credit_key"),
+            ("state", "in", ("test", "enabled"))], limit=1
         )
         if not provider:
             raise UserError(_("No Credit Key payment provider found."))
