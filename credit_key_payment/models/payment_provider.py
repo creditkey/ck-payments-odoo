@@ -19,10 +19,9 @@ class PaymentProvider(models.Model):
         string="Credit Key Public key",
         help="The public key provided to you by Credit Key. This varies between staging and production environments.",
         required_if_provider="credit_key",
-        groups="base.group_system",
     )
     credit_key_shared_secret = fields.Char(
-        string="Credit Key Shared Secret", required_if_provider="credit_key", groups="base.group_system"
+        string="Credit Key Shared Secret", required_if_provider="credit_key",
     )
     show_promotional_message_product = fields.Boolean(
         string="Show Credit Key Widget on Website",
