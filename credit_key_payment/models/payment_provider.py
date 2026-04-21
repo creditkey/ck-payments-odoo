@@ -53,25 +53,14 @@ class PaymentProvider(models.Model):
         string="Custom Selector (Checkout)", help="Enter the custom price tag selector."
     )
 
-    credit_key_api_version = fields.Selection(
-        selection=[
-            ("v1", "Legacy"),
-            ("v2", "V2"),
-        ],
-        string="API Version",
-        help="Select the API version you are working with.",
-        default="v1",
-    )
     credit_key_client_key = fields.Char(
         string="Client ID",
         help="The Client ID provided to you by Credit Key.",
-        # required_if_provider="credit_key",
-        groups="base.group_system",
+        required_if_provider="credit_key",
     )
     credit_key_client_secret = fields.Char(
         string="Client Secret",
-        # required_if_provider="credit_key",
-        groups="base.group_system"
+        required_if_provider="credit_key",
     )
     credit_key_v2_token = fields.Char("Auth Token", readonly=True)
     credit_key_v2_token_expiry = fields.Char("Expiry Time", readonly=True)
@@ -89,7 +78,6 @@ class PaymentProvider(models.Model):
         providers = self.search([
             ("code", "=", "credit_key"),
             ("state", "in", ("enabled", "test")),
-            ("credit_key_api_version", "=", "v2"),
         ])
         for provider in providers:
             provider._credit_key_get_v2_token()
