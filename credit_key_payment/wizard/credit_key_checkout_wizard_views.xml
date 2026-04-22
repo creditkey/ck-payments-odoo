@@ -21,34 +21,20 @@
                             <group>
                                 <field name="ck_company_name" readonly="1"/>
                                 <field name="ck_status" readonly="1"/>
-                                <field name="ck_decision_date" readonly="1"/>
-                                <field name="ck_ordering_available" readonly="1"/>
-                            </group>
-                        </page>
-                        <page string="Credit Info">
-                            <group>
                                 <field name="ck_tcl_amount" readonly="1"/>
                                 <field name="ck_tcl_remaining" readonly="1"/>
-                                <field name="ck_vc_limit" readonly="1"/>
-                                <field name="ck_vc_remaining" readonly="1"/>
-                                <field name="ck_available_terms" readonly="1"/>
                             </group>
                         </page>
-                        <page string="Borrower">
+                        <page string="Support">
                             <group>
-                                <field name="ck_borrower_name" readonly="1"/>
-                                <field name="ck_borrower_email" readonly="1"/>
+                                <field name="support_link" widget="url" readonly="1"/>
                             </group>
-                        </page>
-                        <page string="Other Companies" invisible="not ck_other_companies">
-                            <field name="ck_other_companies" readonly="1" widget="text"/>
                         </page>
                     </notebook>
                 </sheet>
                 <footer>
-                    <button name="action_confirm" string="Confirm" type="object" class="btn-primary" 
-                    invisible="not credit_key_company_id"
-                    />
+                    <button name="action_confirm" string="Authorize" type="object" class="btn-primary"
+                    invisible="not credit_key_company_id"/>
                     <button string="Cancel" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>

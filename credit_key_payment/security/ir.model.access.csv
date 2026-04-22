@@ -1,2 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 credit_key_payment.access_credit_key_checkout_wizard,access_credit_key_checkout_wizard,credit_key_payment.model_credit_key_checkout_wizard,base.group_user,1,1,1,1
+credit_key_payment.access_credit_key_status_wizard,access_credit_key_status_wizard,credit_key_payment.model_credit_key_status_wizard,base.group_user,1,1,1,1
+credit_key_payment.access_credit_key_redirect_wizard,access_credit_key_redirect_wizard,credit_key_payment.model_credit_key_redirect_wizard,base.group_user,1,1,1,1

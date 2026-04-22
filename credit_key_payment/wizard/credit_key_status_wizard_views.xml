@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="view_credit_key_status_wizard" model="ir.ui.view">
+        <field name="name">credit.key.status.wizard.form</field>
+        <field name="model">credit.key.status.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Credit Key Status">
+                <group>
+                    <div class="oe_title">
+                        <field name="message" nolabel="1" readonly="1"/>
+                    </div>
+                    <div>
+                        <field name="credit_key_order_id" readonly="1"/>
+                        <field name="credit_key_status" readonly="1"/>
+                    </div>
+                </group>
+                <footer>
+                    <button string="Close" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

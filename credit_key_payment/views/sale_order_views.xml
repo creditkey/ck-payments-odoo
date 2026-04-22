@@ -9,7 +9,22 @@
                 <field name="credit_key_company_id" invisible="1"/>
             </group>
             <xpath expr="//field[@name='state']" position="before">
-                <button name="credit_key_checkout" string="Credit Key" type="object" invisible="state != 'sale'"/>
+
+                <button name="credit_key_checkout"
+                        string="Credit Key"
+                        type="object"
+                        invisible="state != 'sale' or credit_key_order_id"/>
+
+                <button name="action_view_credit_key_status"
+                        string="Credit Key Status"
+                        type="object"
+                        invisible="state != 'sale' or not credit_key_order_id"/>
+            </xpath>
+            <xpath expr="//sheet" position="inside">
+                <widget name="web_ribbon"
+                        title="Authorized"
+                        bg_color="bg-success"
+                        invisible="not credit_key_order_id"/>
             </xpath>
 
             <xpath expr="//sheet/notebook" position="inside">

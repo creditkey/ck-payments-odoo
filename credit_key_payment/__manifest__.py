@@ -20,6 +20,8 @@
         "views/account_move_views.xml",
         "views/payment_provider_views.xml",
         "wizard/credit_key_checkout_wizard_views.xml",
+        "wizard/credit_key_status_wizard_views.xml",
+        "wizard/credit_key_redirect_wizard_views.xml",
     ],
     "post_init_hook": "post_init_hook",
     "uninstall_hook": "uninstall_hook",

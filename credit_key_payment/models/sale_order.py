@@ -403,7 +403,23 @@ class SaleOrder(models.Model):
 
         data = response.get("data", [])
         if not data:
-            raise UserError(_("No Credit Key company found."))
+            if not data:
+                return {
+                    "type": "ir.actions.act_window",
+                    "name": "Credit Key",
+                    "res_model": "credit.key.redirect.wizard",
+                    "view_mode": "form",
+                    "target": "new",
+                    "context": {
+                        "default_message": _(
+                            "<p>No Credit Key company found.</p>"
+                            "<a href='https://www.creditkey.com/app/users/sign_in' target='_blank' "
+                            "style='display:inline-block; padding:10px 16px; "
+                            "background-color:#875A7B; color:white; text-decoration:none; "
+                            "border-radius:5px; font-weight:bold;'>Apply Here</a>"
+                        )
+                    },
+                }
         
         def _parse_ck_datetime(date_str):
             if not date_str:
@@ -437,21 +453,7 @@ class SaleOrder(models.Model):
             # ---- FINANCIAL ----
             "default_ck_tcl_amount": company.get("tcl_amount"),
             "default_ck_tcl_remaining": company.get("tcl_amount_remaining"),
-            "default_ck_vc_limit": company.get("vc_sub_limit"),
-            "default_ck_vc_remaining": company.get("vc_sub_limit_remaining"),
 
-            # ---- FLAGS ----
-            "default_ck_ordering_available": company.get("ordering_available"),
-            "default_ck_virtual_card_enabled": company.get("virtual_card_enabled"),
-
-            # ---- TERMS ----
-            "default_ck_available_terms": ", ".join(map(str, company.get("available_terms", []))),
-
-            # ---- DATE ----
-            "default_ck_decision_date": _parse_ck_datetime(company.get("decision_date")),
-
-            # ---- MULTIPLE COMPANIES ----
-            "default_ck_other_companies": json.dumps(data[1:]) if len(data) > 1 else False,
         }
 
         return {
@@ -533,5 +535,31 @@ class SaleOrder(models.Model):
             "items": cart_items,
             "metadata": {
                 "sales_rep": self.user_id.name or self.env.user.name,
+            },
+        }
+
+    def action_view_credit_key_status(self):
+        self.ensure_one()
+
+        status = (self.credit_key_status or "").lower()
+
+        if status in ("placed", "shipped"):
+            message = "Order has been successfully placed."
+        elif status in ("returned", "canceled") or self.state == "cancel":
+            message = "Order has been canceled."
+        else:
+            message = "Order is in state: %s" % status
+
+        return {
+            "type": "ir.actions.act_window",
+            "name": "Credit Key Status",
+            "res_model": "credit.key.status.wizard",
+            "view_mode": "form",
+            "target": "new",
+            "context": {
+                "default_sale_order_id": self.id,
+                "default_credit_key_order_id": self.credit_key_order_id,
+                "default_credit_key_status": self.credit_key_status,
+                "default_message": message,
             },
         }

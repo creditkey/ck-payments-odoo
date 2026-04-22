@@ -13,26 +13,16 @@ class CreditKeyCheckoutWizard(models.TransientModel):
     sale_order_id = fields.Many2one("sale.order")
     partner_id = fields.Many2one("res.partner")
 
-    credit_key_company_id = fields.Char()
-    ck_company_name = fields.Char()
-    ck_status = fields.Char()
+    credit_key_company_id = fields.Char(string="Company Id")
+    ck_company_name = fields.Char(string="Company Name")
+    ck_status = fields.Char(string="Status")
 
-    ck_borrower_name = fields.Char()
-    ck_borrower_email = fields.Char()
+    ck_borrower_name = fields.Char(string="Borrower Name")
+    ck_borrower_email = fields.Char(string="Email")
 
-    ck_tcl_amount = fields.Float()
-    ck_tcl_remaining = fields.Float()
-    ck_vc_limit = fields.Float()
-    ck_vc_remaining = fields.Float()
-
-    ck_ordering_available = fields.Boolean()
-    ck_virtual_card_enabled = fields.Boolean()
-
-    ck_available_terms = fields.Char()
-
-    ck_decision_date = fields.Datetime()
-
-    ck_other_companies = fields.Text()
+    ck_tcl_amount = fields.Float(string="TCL Amount")
+    ck_tcl_remaining = fields.Float(string="TCL Remaining")
+    support_link = fields.Char('Support Link', default="https://www.creditkey.com/support")
 
     def action_confirm(self):
         """Make the Credit Key v2 backend checkout request."""
