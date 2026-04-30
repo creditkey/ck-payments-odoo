@@ -1,5 +1,6 @@
 from odoo import _, fields, models
 from odoo.exceptions import UserError
+from odoo.tools.float_utils import float_round
 
 
 _ERROR_MESSAGES = {
@@ -56,10 +57,10 @@ class PaymentTransaction(models.Model):
                 cart_items.append({
                     "merchant_id": str(line.id),
                     "name": line.product_id.name or "Item",
-                    "price": float(line.price_subtotal),
+                    "price": float_round(float(line.price_subtotal), 2),
                     "quantity": int(line.product_uom_qty),
                     "sku": line.product_id.default_code or "",
-                    "tax": float(line.price_tax or 0.0),
+                    "tax": float_round(float(line.price_tax or 0.0), 2),
                     "size": line.product_template_id.attribute_line_ids.filtered(
                         lambda a: a.attribute_id.name.lower() == "size"
                     ).mapped("value_ids.name")[:1]
@@ -90,13 +91,13 @@ class PaymentTransaction(models.Model):
         tax = sum(cart.get("tax", 0) for cart in cart_items)
         grand_total = total + tax
         charges = {
-            "total": total,
-            "shipping": shipping,
-            "tax": tax,
-            "discount": sum(
-                max(0.0, so.currency_id.round(so.amount_undiscounted - so.amount_untaxed)) for so in sale_orders
+            "total": float_round(total, 2),
+            "shipping": float_round(shipping, 2),
+            "tax": float_round(tax, 2),
+            "discount": float_round(
+                sum(max(0.0, so.currency_id.round(so.amount_undiscounted - so.amount_untaxed)) for so in sale_orders), 2
             ),
-            "grand_total": grand_total,
+            "grand_total": float_round(grand_total, 2),
         }
         return {
             "cart_items": cart_items,
@@ -194,10 +195,10 @@ class PaymentTransaction(models.Model):
             cart_items.append({
                 "merchant_id": str(line.id),
                 "name": line.product_id.display_name or line.name,
-                "price": float(line.price_subtotal),
+                "price": float_round(float(line.price_subtotal), 2),
                 "quantity": int(line.product_uom_qty),
                 "sku": line.product_id.default_code or "",
-                "tax": float(tax_amount),
+                "tax": float_round(float(tax_amount), 2),
             })
 
         total = sale_order.amount_untaxed
@@ -210,11 +211,11 @@ class PaymentTransaction(models.Model):
         )
 
         charges = {
-            "total": total,
-            "shipping": shipping,
-            "tax": tax,
-            "discount_amount": discount,
-            "grand_total": sale_order.amount_total,
+            "total": float_round(total, 2),
+            "shipping": float_round(shipping, 2),
+            "tax": float_round(tax, 2),
+            "discount_amount": float_round(discount, 2),
+            "grand_total": float_round(sale_order.amount_total, 2),
         }
 
         shipping_partner = sale_order.partner_shipping_id or sale_order.partner_id

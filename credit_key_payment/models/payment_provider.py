@@ -21,7 +21,8 @@ class PaymentProvider(models.Model):
         required_if_provider="credit_key",
     )
     credit_key_shared_secret = fields.Char(
-        string="Credit Key Shared Secret", required_if_provider="credit_key",
+        string="Credit Key Shared Secret",
+        required_if_provider="credit_key",
     )
     show_promotional_message_product = fields.Boolean(
         string="Show Credit Key Widget on Website",
