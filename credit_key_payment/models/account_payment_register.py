@@ -12,10 +12,13 @@ class AccountPaymentRegister(models.TransientModel):
         Otherwise, fall back to normal behavior.
         """
         self.ensure_one()
-        payment_method = self.payment_method_line_id
-        provider = self.env["payment.provider"].search([("code", "=", payment_method.code)], limit=1)
-        if not provider or provider.code != "credit_key":
+        if self.payment_method_line_id.code != "credit_key":
             return super()._create_payment_vals_from_wizard(batch_result)
+        provider = self.env["payment.provider"].sudo().search(
+            [("code", "=", "credit_key"), ("state", "in", ("test", "enabled"))], limit=1
+        )
+        if not provider:
+            raise UserError(_("Payment Provider Credit Key is not set up."))
         payment_vals = {
             "date": self.payment_date,
             "amount": self.amount,

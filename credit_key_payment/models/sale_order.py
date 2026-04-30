@@ -1,6 +1,6 @@
 from odoo import _, fields, models
 from odoo.exceptions import UserError
-from odoo.tools.float_utils import float_compare
+from odoo.tools.float_utils import float_compare, float_round
 
 
 class SaleOrder(models.Model):
@@ -133,10 +133,10 @@ class SaleOrder(models.Model):
             cart_items.append({
                 "merchant_id": str(line.id),
                 "name": line.product_id.display_name or line.name or "Item",
-                "price": float(line.price_subtotal),
+                "price": float_round(float(line.price_subtotal), 2),
                 "quantity": int(line.product_uom_qty),
                 "sku": line.product_id.default_code or "",
-                "tax": float(tax_amount),
+                "tax": float_round(float(tax_amount), 2),
                 "size": line.product_template_id.attribute_line_ids.filtered(
                     lambda a: a.attribute_id.name.lower() == "size"
                 ).mapped("value_ids.name")[:1]
@@ -150,11 +150,13 @@ class SaleOrder(models.Model):
 
         # --- Charges ---
         charges = {
-            "total": float(self.amount_untaxed),
-            "shipping": shipping,
-            "tax": float(self.amount_tax),
-            "discount_amount": self.currency_id.round(self.amount_undiscounted - self.amount_untaxed) if self.amount_undiscounted else 0.0,
-            "grand_total": float(self.amount_total),
+            "total": float_round(float(self.amount_untaxed), 2),
+            "shipping": float_round(shipping, 2),
+            "tax": float_round(float(self.amount_tax), 2),
+            "discount_amount": self.currency_id.round(self.amount_undiscounted - self.amount_untaxed)
+            if self.amount_undiscounted
+            else 0.0,
+            "grand_total": float_round(float(self.amount_total), 2),
         }
 
         # --- Shipping address ---
