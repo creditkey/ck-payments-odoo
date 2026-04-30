@@ -14,7 +14,7 @@ class AccountPaymentRegister(models.TransientModel):
         self.ensure_one()
         if self.payment_method_line_id.code != "credit_key":
             return super()._create_payment_vals_from_wizard(batch_result)
-        provider = self.env["payment.provider"].search(
+        provider = self.env["payment.provider"].sudo().search(
             [("code", "=", "credit_key"),
             ("state", "in", ("test", "enabled"))], limit=1
         )

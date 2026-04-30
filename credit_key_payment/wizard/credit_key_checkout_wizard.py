@@ -35,15 +35,12 @@ class CreditKeyCheckoutWizard(models.TransientModel):
             raise UserError(_("No Credit Key payment provider found."))
 
         payload = self.sale_order_id._credit_key_prepare_backend_checkout_payload(self.credit_key_company_id)
-        print("\n ----------------------------------------", pprint.pformat(payload), "\n -------------------------------------")
         response = provider._credit_key_make_request(
             "order",
             payload=payload,
             api_version="v2",
         )
-        print(response)
         if response.get("success") is False:
-            print(response)
             status_code = response.get("status_code")
             message = response.get("message")
             error = response.get("error", "")
@@ -59,19 +56,12 @@ class CreditKeyCheckoutWizard(models.TransientModel):
             raise UserError(_("Credit Key response missing order key."))
 
         sale_order = self.sale_order_id
-
-        print("[CK] Setting CK Order ID on sale_order:", ck_key)
-
         sale_order.write({
             "credit_key_order_id": ck_key,
             "credit_key_status": status,
         })
-
         status = (response.get("status") or "").upper()
         reasons = response.get("reasons") or []
-
-        print("[CK] Status:", status, "| Reasons:", reasons)
-
         status = (response.get("status") or "").upper()
         reasons = response.get("reasons") or []
 
@@ -81,5 +71,4 @@ class CreditKeyCheckoutWizard(models.TransientModel):
                 "Credit Key order is pending approval.\nReason: %s."
             ) % reason_text
             self.sale_order_id.message_post(body=warning_msg)
-            print("[CK WARNING]:", warning_msg)
         return {"type": "ir.actions.act_window_close"}

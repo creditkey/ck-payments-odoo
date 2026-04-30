@@ -15,10 +15,6 @@ class PaymentTransaction(models.Model):
 
     credit_key_order_id = fields.Char("Credit Key Order ID", copy=False, readonly=True)
 
-    # ------------------------------------------------------------
-    # Checkout: Rendering Values
-    # ------------------------------------------------------------
-
     def _get_specific_rendering_values(self, processing_values):
         """Override of payment to return Credit Key-specific rendering values."""
         res = super()._get_specific_rendering_values(processing_values)
