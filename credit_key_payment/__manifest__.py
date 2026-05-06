@@ -4,7 +4,7 @@
     "name": "Payment Provider: Credit Key",
     "version": "19.0.1.0.0",
     "category": "Accounting/Payment Providers",
-    "summary": "Integrate Credit Key with Odoo to offer instant B2B payment terms at checkout and directly within Odoo sales workflows. Increase conversions, grow order sizes, and get guaranteed payment, with zero credit risk.",
+    "summary": "B2B payment terms at checkout",
     "description": "Credit Key is a B2B payment solution that enables merchants to offer fast, transparent, and flexible payment terms to business buyers without taking on credit risk. With Credit Key integrated into Odoo, your sales reps can offer Net 30 and extended payment terms, and complete the full payment flow directly within Odoo — no switching systems, no manual credit checks, no offline approvals. The result is higher conversion rates, larger average order values, and faster purchasing decisions.",
     "sequence": 350,
     "author": "Credit Key",
