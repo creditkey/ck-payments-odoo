@@ -20,7 +20,7 @@
         "views/account_move_views.xml",
         "views/payment_provider_views.xml",
     ],
-    'images': ['static/description/banner.png'],
+    'images': ['static/description/images/banner.png'],
     "post_init_hook": "post_init_hook",
     "uninstall_hook": "uninstall_hook",
     "license": "LGPL-3",
