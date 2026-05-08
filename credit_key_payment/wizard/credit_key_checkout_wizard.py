@@ -1,6 +1,5 @@
 from odoo import _, fields, models
 from odoo.exceptions import UserError
-import pprint
 
 import requests
 from urllib.parse import quote_plus
@@ -20,8 +19,8 @@ class CreditKeyCheckoutWizard(models.TransientModel):
     ck_borrower_name = fields.Char(string="Borrower Name")
     ck_borrower_email = fields.Char(string="Email")
 
-    ck_tcl_amount = fields.Float(string="TCL Amount")
-    ck_tcl_remaining = fields.Float(string="TCL Remaining")
+    ck_tcl_amount = fields.Float(string="Total Credit Line")
+    ck_tcl_remaining = fields.Float(string="Amount Remaining")
     support_link = fields.Char('Support Link', default="https://www.creditkey.com/support")
 
     def action_confirm(self):

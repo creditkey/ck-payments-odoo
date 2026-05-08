@@ -5,15 +5,15 @@
         <field name="model">credit.key.status.wizard</field>
         <field name="arch" type="xml">
             <form string="Credit Key Status">
-                <group>
                     <div class="oe_title">
                         <field name="message" nolabel="1" readonly="1"/>
                     </div>
                     <div>
+                        <group>
                         <field name="credit_key_order_id" readonly="1"/>
                         <field name="credit_key_status" readonly="1"/>
+                        </group>
                     </div>
-                </group>
                 <footer>
                     <button string="Close" special="cancel"/>
                 </footer>

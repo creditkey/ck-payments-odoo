@@ -5,6 +5,9 @@
         <field name="model">credit.key.checkout.wizard</field>
         <field name="arch" type="xml">
             <form string="Credit Key Checkout">
+                <header>
+                        <span>adsadsad a</span>
+                </header>
                 <sheet>
                     <group>
                         <group>
@@ -33,9 +36,15 @@
                     </notebook>
                 </sheet>
                 <footer>
-                    <button name="action_confirm" string="Authorize" type="object" class="btn-primary"
-                    invisible="not credit_key_company_id"/>
-                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    <div>
+                        <div class="mb-1">
+                            <strong invisible="not context.get('show_footer_message')">Would you like to authorize payment with the customer's default term?</strong>
+                        </div>
+                        <div>
+                            <button name="action_confirm" string="Authorize" type="object" class="btn-primary mr-2" invisible="not credit_key_company_id"/>
+                            <button string="Cancel" class="btn-secondary" special="cancel"/>
+                        </div>
+                    </div>
                 </footer>
             </form>
         </field>

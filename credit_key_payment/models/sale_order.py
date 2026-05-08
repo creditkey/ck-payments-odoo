@@ -1,9 +1,7 @@
 from odoo import _, fields, models
 from odoo.exceptions import UserError
 from odoo.tools.float_utils import float_compare, float_round
-import re, logging
-
-_logger = logging.getLogger(__name__)
+import re
 
 
 class SaleOrder(models.Model):
@@ -85,7 +83,6 @@ class SaleOrder(models.Model):
     def _ck_create_tx_and_payment(self, provider, ck_order_id, amount, invoices):
         self.ensure_one()
 
-        _logger.warning("[CK BACKEND] Creating transaction + payment for SO %s", self.name)
         if not provider.payment_method_ids:
             raise UserError(_("Please Make sure the Payment Method is set on the Provider."))
         ck_payment_method = provider.payment_method_ids.filtered(lambda p: p.code == "payment_credit_key")
@@ -125,9 +122,6 @@ class SaleOrder(models.Model):
         tx.payment_id = payment.id
         tx._set_done()
         tx._post_process()
-
-        _logger.warning("[CK BACKEND] Transaction %s and Payment %s created", tx.reference, payment.name)
-
         return tx
 
     def _ck_recreate_transaction(self, credit_key_tx, invoices, ck_total):
@@ -333,13 +327,15 @@ class SaleOrder(models.Model):
                     "view_mode": "form",
                     "target": "new",
                     "context": {
-                        "default_message": _(
-                            "<p>No Credit Key company found.</p>"
+                        "default_message": "Customer not found as an approved Credit Key Borrower. What would you like to do?",
+                        "default_apply_message": _(
+                            "<p style='margin: 0; font-weight:bold;'>Have Customer Apply Here.</p>"
                             "<a href='https://www.creditkey.com/app/users/sign_in' target='_blank' "
-                            "style='display:inline-block; padding:10px 16px; "
-                            "background-color:#875A7B; color:white; text-decoration:none; "
-                            "border-radius:5px; font-weight:bold;'>Apply Here</a>"
-                        )
+                            "style='display:inline-block; padding:6px 18px 6px 18px; "
+                            "background-color:#6b3e66; color:white; text-decoration:none; "
+                            "border-radius:5px; font-weight:bold;' class='btn-sm'>Apply</a>"
+                        ),
+                        "show_ck_logo": True,
                     },
                 }
         
@@ -371,7 +367,8 @@ class SaleOrder(models.Model):
 
             "default_ck_tcl_amount": company.get("tcl_amount"),
             "default_ck_tcl_remaining": company.get("tcl_amount_remaining"),
-
+            "show_ck_logo": True,
+            "show_footer_message": True,
         }
 
         return {
@@ -421,6 +418,9 @@ class SaleOrder(models.Model):
             address = _format_address(self.partner_id)
             billing_address = address
             shipping_address = address
+
+        # TODO Temp FIX
+        billing_address = shipping_address
 
         cart_items = []
         for line in self.order_line.filtered(lambda l: l.display_type not in ("line_section", "line_subsection", "line_note")):
@@ -478,5 +478,6 @@ class SaleOrder(models.Model):
                 "default_credit_key_order_id": self.credit_key_order_id,
                 "default_credit_key_status": self.credit_key_status,
                 "default_message": message,
+                "show_ck_logo": True,
             },
         }

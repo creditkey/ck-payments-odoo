@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="credit_key.Dialog.header" t-inherit="web.Dialog.header" t-inherit-mode="extension">
+        <xpath expr="//h4[contains(concat(' ',normalize-space(@class),' '),' modal-title ')]" position="before">
+            <!-- <t t-log="this.props.actionProps.context"/> -->
+            <t t-if="this.props.actionProps.context.show_ck_logo">
+            <img src="/credit_key_payment/static/description/icon.svg"
+                style="height: 40px; margin-right: 10px;"/>
+            </t>
+        </xpath>
+        <xpath expr="//t[@t-esc='props.title']" position="attributes">
+            <attribute name="t-if">this.props.actionProps.context.show_ck_logo === True</attribute>
+        </xpath>
+    </t>
+</templates>

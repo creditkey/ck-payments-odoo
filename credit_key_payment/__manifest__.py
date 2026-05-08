@@ -23,6 +23,11 @@
         "wizard/credit_key_status_wizard_views.xml",
         "wizard/credit_key_redirect_wizard_views.xml",
     ],
+    'assets': {
+        'web._assets_core': [
+            'credit_key_payment/static/src/core/**/*',
+        ],
+    },
     "post_init_hook": "post_init_hook",
     "uninstall_hook": "uninstall_hook",
     "license": "LGPL-3",

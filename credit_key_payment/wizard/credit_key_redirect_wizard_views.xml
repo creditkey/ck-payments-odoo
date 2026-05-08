@@ -5,9 +5,22 @@
         <field name="model">credit.key.redirect.wizard</field>
         <field name="arch" type="xml">
             <form string="Credit Key">
-                <group>
-                        <field name="message" nolabel="1" readonly="1"/>
-                </group>
+                        <h4>
+                            <field name="message" nolabel="1" readonly="1"/>
+                        </h4>
+                    <div class="row mb-2">
+                        <div class="col">
+                            <label for="url" string="Copy Application Link"/>
+                            <br/>
+                            <field name="url" widget="CopyClipboardButton" nolabel="1" string="Copy" options="{'btn_class': 'primary'}"/>
+                        </div>
+                        <div class="col">
+                            <field name="apply_message" nolabel="1" readonly="1"/>
+                        </div>
+                    </div>
+                    <group class="mt-2">
+                        <field name="support_url" widget="url" readonly="1"/>
+                    </group>
                 <footer>
                     <button string="Close" special="cancel"/>
                 </footer>
