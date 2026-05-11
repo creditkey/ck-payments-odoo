@@ -29,6 +29,9 @@
                 </group>
             </group>
             <group name="payment_followup" position="after">
+                <group name="application_url" string="Application URL" invisible="code != 'credit_key'">
+                    <field name="credit_key_application_url" widget="url"/>
+                </group>
                 <group
                     name="show_promotional_product"
                     string="Product Promotional Message"

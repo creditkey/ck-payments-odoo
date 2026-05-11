@@ -64,6 +64,7 @@ class PaymentProvider(models.Model):
     )
     credit_key_v2_token = fields.Char("Auth Token", readonly=True)
     credit_key_v2_token_expiry = fields.Char("Expiry Time", readonly=True)
+    credit_key_application_url = fields.Char("Application URL", default="https://www.creditkey.com/app/users/sign_in")
 
     def _compute_feature_support_fields(self):
         """Override of `payment` to enable additional features."""

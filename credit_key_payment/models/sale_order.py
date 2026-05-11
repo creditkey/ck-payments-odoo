@@ -314,8 +314,15 @@ class SaleOrder(models.Model):
 
     def credit_key_checkout(self):
         self.ensure_one()
-
         response = self._credit_key_check_company()
+        provider = self.env["payment.provider"].search(
+            [("code", "=", "credit_key"),
+            ("state", "in", ("test", "enabled"))], limit=1
+        )
+        if not provider:
+            raise UserError(_("No Credit Key payment provider found."))
+
+        application_url = provider.credit_key_application_url
 
         data = response.get("data", [])
         if not data:
@@ -327,18 +334,19 @@ class SaleOrder(models.Model):
                     "view_mode": "form",
                     "target": "new",
                     "context": {
+                        "default_url": application_url,
                         "default_message": "Customer not found as an approved Credit Key Borrower. What would you like to do?",
                         "default_apply_message": _(
                             "<p style='margin: 0; font-weight:bold;'>Have Customer Apply Here.</p>"
-                            "<a href='https://www.creditkey.com/app/users/sign_in' target='_blank' "
-                            "style='display:inline-block; padding:6px 18px 6px 18px; "
+                            "<a href='%s' target='_blank' "
+                            "style='display:inline-block; padding:6px 18px; "
                             "background-color:#6b3e66; color:white; text-decoration:none; "
-                            "border-radius:5px; font-weight:bold;' class='btn-sm'>Apply</a>"
-                        ),
+                            "border-radius:5px; font-weight:bold;'>Apply</a>"
+                        ) % application_url,
                         "show_ck_logo": True,
                     },
                 }
-        
+
         def _parse_ck_datetime(date_str):
             if not date_str:
                 return False
@@ -420,7 +428,7 @@ class SaleOrder(models.Model):
             shipping_address = address
 
         # TODO Temp FIX
-        billing_address = shipping_address
+        shipping_address = billing_address
 
         cart_items = []
         for line in self.order_line.filtered(lambda l: l.display_type not in ("line_section", "line_subsection", "line_note")):
