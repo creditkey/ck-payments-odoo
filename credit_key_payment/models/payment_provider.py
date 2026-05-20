@@ -61,7 +61,7 @@ class PaymentProvider(models.Model):
         """
         self.ensure_one()
         if self.state == "enabled":
-            return "https://www.creditkey.com/app/ecomm"
+            return "https://www.creditkey.com/app/ecomm/"
         else:
             return "https://staging.creditkey.com/app/ecomm/"
 
